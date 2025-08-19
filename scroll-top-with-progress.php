@@ -14,7 +14,104 @@
  * Text Domain:       stwp
  */
 
-// Enqueue CSS
+ /*
+ * Plugin Option Page Function
+ */
+function stwp_add_theme_page(){
+add_menu_page( 'Scroll To Top Option for Admin', 'Scroll To Top', 'manage_options', 'stwp-plugin-option', 'stwp_create_page', 'dashicons-arrow-up-alt', 101 );
+}
+add_action( 'admin_menu', 'stwp_add_theme_page' );
+
+/*
+* Plugin Option Page Style
+*/
+function stwp_add_theme_css(){
+  wp_enqueue_style( 'stwp-admin-style', plugins_url( 'css/stwp-admin-style.css', __FILE__ ), false, "1.0.0");
+}
+add_action('admin_enqueue_scripts', 'stwp_add_theme_css');
+
+/**
+ * Plugin Callback
+ */
+function stwp_create_page(){
+
+    // Default colors
+    $defaults = array(
+        'stwp-primary-color'   => '#BDE162',
+        'stwp-secondary-color' => '#F5F2F0',
+        'stwp-icon-color'      => '#000000',
+    );
+
+    // Reset handling
+    if ( isset($_POST['stwp_reset_colors']) && check_admin_referer('stwp_reset_action','stwp_reset_nonce') ) {
+        foreach( $defaults as $key => $val ) {
+            update_option($key, $val);
+        }
+        echo '<div class="updated"><p>Colors have been reset to default.</p></div>';
+    }
+
+    ?>
+      <div class="stwp_main_area">
+        <div class="stwp_body_area stwp_common">
+          <h3 id="title"><?php print esc_attr( '🎨 Scroll Top Customizer' ); ?></h3>
+          <form action="options.php" method="post">
+            <?php wp_nonce_field('update-options'); ?>
+
+            <!-- Primary Color -->
+            <label for="stwp-primary-color"><?php print esc_attr( 'Primary Color' ); ?></label>
+            <small>Add your Primary Color</small>
+            <input type="color" name="stwp-primary-color" 
+                   value="<?php echo esc_attr( get_option('stwp-primary-color', $defaults['stwp-primary-color']) ); ?>">
+
+            <!-- Secondary Color -->
+            <label for="stwp-secondary-color"><?php print esc_attr( 'Secondary Color' ); ?></label>
+            <small>Add your Secondary Color</small>
+            <input type="color" name="stwp-secondary-color" 
+                   value="<?php echo esc_attr( get_option('stwp-secondary-color', $defaults['stwp-secondary-color']) ); ?>">
+
+            <!-- Icon Color -->
+            <label for="stwp-icon-color"><?php print esc_attr( 'Icon Color' ); ?></label>
+            <small>Add your Icon Color</small>
+            <input type="color" name="stwp-icon-color" 
+                   value="<?php echo esc_attr( get_option('stwp-icon-color', $defaults['stwp-icon-color']) ); ?>">
+
+            <!-- Button Position -->
+            <label for="stwp-scroll-position"><?php echo esc_attr(__('Button Position')); ?></label>
+            <small>Where do you want to show your button position?</small>
+            <select name="stwp-scroll-position" id="stwp-scroll-position">
+              <option value="left" <?php selected(get_option('stwp-scroll-position'), 'left'); ?>>Left</option>
+              <option value="right" <?php selected(get_option('stwp-scroll-position'), 'right'); ?>>Right</option>
+            </select>
+
+            <input type="hidden" name="action" value="update">
+            <input type="hidden" name="page_options" value="stwp-primary-color, stwp-secondary-color, stwp-icon-color, stwp-scroll-position">
+
+            <p>
+              <input type="submit" name="submit" class="button button-primary" value="<?php _e('Save Changes', 'stwp') ?>">
+            </p>
+          </form>
+
+          <!-- Reset Form -->
+          <form method="post">
+            <?php wp_nonce_field('stwp_reset_action','stwp_reset_nonce'); ?>
+            <p>
+              <input type="submit" name="stwp_reset_colors" class="button button-secondary" value="<?php _e('Reset to Default Colors', 'stwp') ?>">
+            </p>
+          </form>
+        </div>
+
+        <div class="stwp_sidebar_area stwp_common">
+          <h3 id="title"><?php print esc_attr( '👩‍💻 About Author' ); ?></h3>
+          <p><img src="<?php print plugin_dir_url(__FILE__) . '/img/author.jpeg' ?>" class="img-author" alt=""></p>
+          <p>I'm <strong><a href="https://github.com/irabbi360/" target="_blank">Fazle Rabbi</a></strong>. I'd like to introduce myself as a Full-stack web application developer. Almost 5 years of experience in front end & back-end development. I'm a confident, driven, trustworthy, hard-working individual with a flexible attitude to work and acquire new skills. I can work on my own initiative or as part of a team in management and leadership with a dedication to success.</p>
+          <h5 id="title"><?php print esc_attr( 'Watch Help Video' ); ?></h5>
+          <p><a href="https://www.youtube.com/@CodingXpress" target="_blank" class="btn">Watch On YouTube</a></p>
+        </div>
+      </div>
+    <?php
+}
+
+  // Enqueue CSS
 function stwp_enqueue_style() {
     wp_enqueue_style('stwp-style', plugins_url('css/stwp-style.css', __FILE__));
 }
@@ -41,6 +138,11 @@ add_action('wp_footer', 'stwp_add_scroll_button');
 add_action( "customize_register", "stwp_scroll_to_top");
 
 function stwp_scroll_to_top($wp_customize){
+    // Default colors
+    $primary   = get_option('stwp-primary-color', '#BDE162');
+    $secondary = get_option('stwp-secondary-color', '#F5F2F0');
+    $icon      = get_option('stwp-icon-color', '#000000');
+
 
     // Section
     $wp_customize->add_section('stwp_scroll_top_section', array(
@@ -50,68 +152,72 @@ function stwp_scroll_to_top($wp_customize){
     ));
 
     // Primary Color
-    $wp_customize->add_setting('stwp_primary_color', array(
-        'default'   => '#BDE162',
+    $wp_customize->add_setting('stwp-primary-color', array(
+        'default'   => $primary,
+        'type'      => 'option',
         'transport' => 'refresh',
         'sanitize_callback' => 'sanitize_hex_color',
     ));
     $wp_customize->add_control(
         new WP_Customize_Color_Control(
             $wp_customize,
-            'stwp_primary_color',
+            'stwp-primary-color',
             array(
                 'label'   => __('Primary Color', 'stwp'),
                 'section' => 'stwp_scroll_top_section',
-                'settings'=> 'stwp_primary_color',
+                'settings'=> 'stwp-primary-color',
             )
         )
     );
 
     // Secondary Color
-    $wp_customize->add_setting('stwp_secondary_color', array(
-        'default'   => '#F5F2F0',
+    $wp_customize->add_setting('stwp-secondary-color', array(
+        'default'   => $secondary,
+        'type'      => 'option',
         'transport' => 'refresh',
         'sanitize_callback' => 'sanitize_hex_color',
     ));
     $wp_customize->add_control(
         new WP_Customize_Color_Control(
             $wp_customize,
-            'stwp_secondary_color',
+            'stwp-secondary-color',
             array(
                 'label'   => __('Secondary Color', 'stwp'),
                 'section' => 'stwp_scroll_top_section',
-                'settings'=> 'stwp_secondary_color',
+                'settings'=> 'stwp-secondary-color',
             )
         )
     );
 
     // Icon Color
-    $wp_customize->add_setting('stwp_icon_color', array(
-        'default'   => '#000000',
+    $wp_customize->add_setting('stwp-icon-color', array(
+        'default'   => $icon,
+        'type'      => 'option',
         'transport' => 'refresh',
         'sanitize_callback' => 'sanitize_hex_color',
     ));
     $wp_customize->add_control(
         new WP_Customize_Color_Control(
             $wp_customize,
-            'stwp_icon_color',
+            'stwp-icon-color',
             array(
                 'label'   => __('Icon Color', 'stwp'),
                 'section' => 'stwp_scroll_top_section',
-                'settings'=> 'stwp_icon_color',
+                'settings'=> 'stwp-icon-color',
             )
         )
     );
 
     // Position Setting
-    $wp_customize->add_setting('stwp_scroll_position', array(
-        'default'   => 'right', // default position
+    $wp_customize->add_setting('stwp-scroll-position', array(
+        'default'   => get_option('stwp-scroll-position', 'right'), // default position
+        'type'      => 'option',
         'transport' => 'refresh',
         'sanitize_callback' => 'stwp_sanitize_position',
     ));
 
     // Position Control (radio)
-    $wp_customize->add_control('stwp_scroll_position', array(
+    $wp_customize->add_control('stwp-scroll-position', array(
         'label'   => __('Position', 'stwp'),
         'section' => 'stwp_scroll_top_section',
         'type'    => 'radio',
@@ -124,16 +230,19 @@ function stwp_scroll_to_top($wp_customize){
 
 // Theme CSS Customization
 function stwp_theme_color_customize(){
+    $primary   = get_option('stwp-primary-color', '#BDE162');
+    $secondary = get_option('stwp-secondary-color', '#F5F2F0');
+    $icon      = get_option('stwp-icon-color', '#000000');
   ?>
   <style>
         .stwp-scrolltop:before {
             background: conic-gradient(
-                <?php echo esc_attr( get_theme_mod("stwp_primary_color", "#BDE162") ); ?> var(--stwp-scroll-progress),
-                <?php echo esc_attr( get_theme_mod("stwp_secondary_color", "#F5F2F0") ); ?> 0
+                <?php echo esc_attr( $primary ); ?> var(--stwp-scroll-progress),
+                <?php echo esc_attr( $secondary ); ?> 0
             );
         }
         .stwp-scrolltop {
-            color: <?php echo esc_attr( get_theme_mod("stwp_icon_color", "#000000") ); ?>
+            color: <?php echo esc_attr( $icon ); ?>;
         }
     </style>
 
@@ -150,7 +259,7 @@ function stwp_sanitize_position($input) {
 // position custom css
 add_action('wp_head', 'stwp_scrolltop_custom_css');
 function stwp_scrolltop_custom_css() {
-    $position = get_theme_mod('stwp_scroll_position', 'right');
+    $position = get_option('stwp-scroll-position', 'right');
     ?>
     <style>
     .stwp-scrolltop{
