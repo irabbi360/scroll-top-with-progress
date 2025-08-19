@@ -102,6 +102,24 @@ function stwp_scroll_to_top($wp_customize){
             )
         )
     );
+
+    // Position Setting
+    $wp_customize->add_setting('stwp_scroll_position', array(
+        'default'   => 'right', // default position
+        'transport' => 'refresh',
+        'sanitize_callback' => 'stwp_sanitize_position',
+    ));
+
+    // Position Control (radio)
+    $wp_customize->add_control('stwp_scroll_position', array(
+        'label'   => __('Position', 'stwp'),
+        'section' => 'stwp_scroll_top_section',
+        'type'    => 'radio',
+        'choices' => array(
+            'left'  => __('Left', 'stwp'),
+            'right' => __('Right', 'stwp'),
+        ),
+    ));
 }
 
 // Theme CSS Customization
@@ -122,3 +140,29 @@ function stwp_theme_color_customize(){
   <?php
 }
 add_action('wp_head', 'stwp_theme_color_customize');
+
+// sanitize position
+function stwp_sanitize_position($input) {
+    $valid = array('left', 'right');
+    return in_array($input, $valid, true) ? $input : 'right';
+}
+
+// position custom css
+add_action('wp_head', 'stwp_scrolltop_custom_css');
+function stwp_scrolltop_custom_css() {
+    $position = get_theme_mod('stwp_scroll_position', 'right');
+    ?>
+    <style>
+    .stwp-scrolltop{
+        <?php if ($position === 'left') : ?>
+            left: 2rem;
+            right: auto;
+        <?php else : ?>
+            right: 2rem;
+            left: auto;
+        <?php endif; ?>
+        z-index: 9999;
+    }
+    </style>
+    <?php
+}
