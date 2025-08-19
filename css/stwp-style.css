@@ -1,0 +1,63 @@
+/* ===============================
+   Scroll Top With Progress (WordPress Plugin)
+   =============================== */
+
+:root {
+    --Stwp-Animation-Duration: all .35s ease;
+    --Stwp-Primary: #BDE162;
+    --Stwp-Secondary: #F5F2F0;
+    --Stwp-Heading: #052E26;
+    --stwp-scroll-progress: 100%;
+}
+
+.stwp-scrolltop{
+    position:fixed;
+    bottom:2rem;
+    right:2rem;
+    transition:var(--Stwp-Animation-Duration);
+    z-index:9999;
+    width:2.5rem;
+    height:2.5rem;
+    font-size:1.5rem;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    color:var(--Stwp-Heading);
+    cursor:pointer;
+    transform:translateY(100px);
+    border:0!important;
+    background-color:var(--Stwp-Secondary)
+}
+.stwp-scrolltop span{
+    font-size:1.75rem
+}
+.stwp-scrolltop.scrolltop-show{
+    transform:translateY(0)
+}
+.stwp-scrolltop.scrolltop-hide{
+    transform:translateY(100px)
+}
+@media only screen and (min-width:992px){
+    .stwp-scrolltop{
+        width:3rem;
+        height:3rem;
+        right:3rem;
+        bottom:3rem
+    }
+}
+.stwp-scrolltop:before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    border-radius:50%;
+    background:conic-gradient(var(--Stwp-Primary) var(--stwp-scroll-progress),var(--Stwp-Secondary) 0);
+    z-index:-1
+}
+
+.stwp-shadow-lg {
+    box-shadow: 0 1rem 3rem #2f5bea2d !important;
+}
