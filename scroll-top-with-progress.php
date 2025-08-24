@@ -139,7 +139,7 @@ class STWP_Scroll_Top {
     public function add_scroll_button() {
         ?>
         <button id="scrollTopButton" class="stwp-scrolltop scrolltop-hide stwp-shadow-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+            <img src="<?php echo plugin_dir_url( __FILE__ ) . 'img/back-to-top.svg'; ?>" alt="Back to top" />
         </button>
         <?php
     }
