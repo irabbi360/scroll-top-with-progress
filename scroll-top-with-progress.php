@@ -7,7 +7,7 @@
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            Fazle Rabbi
- * Author URI:        https://devstarit.com/
+ * Author URI:        https://github.com/irabbi360/
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       scroll-top-with-progress
