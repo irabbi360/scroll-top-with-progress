@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       Scroll Top With Progress
- * Plugin URI:        https://wordpress.org/plugins/scroll-top-with-progress/
+ * Plugin URI:        https://github.com/irabbi360/scroll-top-with-progress/
  * Description:       Scroll top with progress plugin will help you to enable Back to Top button to your WordPress website.
  * Version:           1.0.0
  * Requires at least: 5.2

@@ -72,7 +72,7 @@ Initial release.
 
 == Arbitrary section ==
 
-For support or feature requests, please visit [GitHub Repository](https://github.com/irabbi60).
+For support or feature requests, please visit [GitHub Repository](https://github.com/irabbi360/scroll-top-with-progress).
 
 == License ==
 
